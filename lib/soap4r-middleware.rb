@@ -19,16 +19,15 @@ module Soap4r
         # we can act as both a middleware and an app
         @app ?
           @app.call(env) :
-          [ 404, { "Content-Type" => "text/html" }, "Not Found" ]
+          ( return 404, { "Content-Type" => "text/html" }, ["404 - Not Found"] )
       end
     end
 
     def handle(env)
       # yeah, all soap calls are over POST
       if env['REQUEST_METHOD'] != 'POST'
-        return 405, { 'Content-Length' => '0',
-          'Allow' => 'POST',
-          'Content-Type' => 'text/plain' }, []
+        return 405, { 'Allow' => 'POST',
+          'Content-Type' => 'text/plain' }, ["405 - Method Not Allowed"]
       end
 
       conn_data = ::SOAP::StreamHandler::ConnectionData.new
